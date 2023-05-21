@@ -1,14 +1,38 @@
 import { usePagination, useTable } from "react-table"
 import { TableColumns } from "./columns"
-import { useGetUSers } from "./hooks"
-import {  useMemo } from "react"
+import {  useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 
 
 export default function Table() {
-  const { data, isLoading, isError } = useGetUSers()
+  const [pageNumber, setPageNumber] = useState(1)
+  const [limit, setPageLimit] = useState(10)
+
+
+  //fns
+  const getUsers = async (pageNumber, limit) => {
+    const response = await axios.get(`http://localhost:3000/paginated?page=${pageNumber}&limit=${limit}`)
+    return response;
+  }
+
+  const { data, isLoading, isError } = useQuery(["users", pageNumber], ()=> getUsers(pageNumber, limit))
+
+
  
   const memoizedColumns = useMemo(() => TableColumns, [])
-  const memoizedTableData = useMemo(() => data?.data || [], [data])
+  const memoizedTableData = useMemo(() => data?.data?.results || [], [data])
+
+
+  console.log('memoizedTableData', memoizedTableData)
+
+
+  
+  //inbuilt fns
+  const nextPage = ()=>{
+    setPageNumber(pageNumber+ 1)
+  }
+  
 
 
 
@@ -17,7 +41,7 @@ export default function Table() {
     getTableBodyProps,
     headerGroups,
     page,
-    nextPage,
+    // nextPage,
     canNextPage,
     canPreviousPage,
     previousPage,
@@ -31,6 +55,7 @@ export default function Table() {
     columns: memoizedColumns,
     data: memoizedTableData
   }, usePagination)
+
 
 
   //nav to page 
@@ -50,6 +75,7 @@ export default function Table() {
   if (isError || !data) {
     return <p>Error fetching data.</p>;
   }
+
 
 
 
@@ -103,8 +129,8 @@ export default function Table() {
       <br />
         <button disabled={!canPreviousPage} onClick={()=> gotoPage(0)} >{'<<'}</button>
         <button disabled={!canPreviousPage} onClick={() => previousPage()} >Prev</button>
-        <button disabled={!canNextPage}  onClick={()=> nextPage()} >Next</button>
-        <button disabled={!canNextPage} onClick={() => gotoPage(pageCount - 1 )} >{'>>'}</button>
+        <button onClick={() => nextPage()} >Next</button>
+        <button onClick={() => gotoPage(pageCount - 1 )} >{'>>'}</button>
         <br />
         <span>
           page {pageIndex + 1} of {pageOptions?.length}
