@@ -1,11 +1,12 @@
-import Table from "./components/Table"
+import NormalTable from "./components/NormalTable"
+import CustomTable from "./components/CustomTable"
 
 function App() {
   return (
-      <div>
-        <p>Pagination</p>
-        <Table/>
-    </div>
+    <>
+        <CustomTable />
+        {/* <NormalTable/> */}
+    </>
   )
 }
 
