@@ -1,11 +1,13 @@
-import NormalTable from "./components/NormalTable"
-import CustomTable from "./components/CustomTable"
+// import NormalTable from "./components/NormalTable"
+// import CustomTable from "./components/CustomTable"
+import InfiniteComponent from "./components/scroll/InfiniteComponent"
 
 function App() {
   return (
     <>
-        <CustomTable />
+        {/* <CustomTable /> */}
         {/* <NormalTable/> */}
+        <InfiniteComponent/>
     </>
   )
 }
